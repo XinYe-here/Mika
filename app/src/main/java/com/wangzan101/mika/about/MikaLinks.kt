@@ -6,15 +6,17 @@ import java.net.URLEncoder
 
 /** Mika 对外的地址都在这里:仓库、问题、检查更新用的两个来源。换地址只改这一处。 */
 object MikaLinks {
-    const val REPO = "https://github.com/wangzan101/Mika"
-    const val REPO_LABEL = "github.com/wangzan101/Mika"
+    // 自维护分支(dsh/main):仓库、检查更新、下载更新都指向我们自己的 fork,
+    // 这样「关于 Mika → 有新版本」认的是我们自己发布的 APK,而不是上游。
+    const val REPO = "https://github.com/XinYe-here/Mika"
+    const val REPO_LABEL = "github.com/XinYe-here/Mika"
     const val README = "$REPO#readme"
     const val RELEASES = "$REPO/releases"
     const val NEW_ISSUE = "$REPO/issues/new"
     const val X = "https://x.com/wangzan101"
     const val X_HANDLE = "@wangzan101"
-    /** 检查更新只问 GitHub 发布页(不登录,每小时有次数限制)。 */
-    const val LATEST_RELEASE_API = "https://api.github.com/repos/wangzan101/Mika/releases/latest"
+    /** 检查更新只问 GitHub 发布页(不登录,每小时有次数限制)。自维护分支指向我们自己的 fork。 */
+    const val LATEST_RELEASE_API = "https://api.github.com/repos/XinYe-here/Mika/releases/latest"
 
     /** 反馈时预先填进问题模板的设备与版本信息。 */
     data class Device(
