@@ -9,6 +9,8 @@ class AppPacePlan(
     val global: OperatingPace,
     /** 按应用覆盖:包名 → 档位。 */
     val overrides: Map<String, OperatingPace> = emptyMap(),
+    /** 限制浏览快慢的 App 一个任务里最多换到几屏(设置里可选);0 为不限制。 */
+    val screenCap: Int = AppPacing.CAREFUL_SCREEN_CAP,
 ) {
     /** [pkg] 的实际档位:有覆盖用覆盖,否则全局;不知道包名( null)为全局。 */
     fun of(pkg: String?): OperatingPace = overrides[pkg] ?: global
@@ -21,5 +23,5 @@ class AppPacePlan(
 
     /** 这个任务在 App 里一步一步操作的节奏:有覆盖时不能按全局档位整个变形,统一两套 limits、快慢按 App 分。 */
     fun appPacing(random: kotlin.random.Random = kotlin.random.Random.Default): AppPacing =
-        if (allFast) AppPacing.Off else AppPacing.human(random)
+        if (allFast) AppPacing.Off else AppPacing.human(random, screenCap = screenCap)
 }

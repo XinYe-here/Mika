@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.wangzan101.mika.R
 import com.wangzan101.mika.cap.phone.a11y.launchableApps
+import com.wangzan101.mika.core.cap.phone.AppPacing
 import com.wangzan101.mika.core.cap.phone.OperatingPace
 import com.wangzan101.mika.settings.FeatureFlags
 import com.wangzan101.mika.ui.components.*
@@ -41,8 +42,11 @@ fun AppPaceScreen(global: OperatingPace, flags: FeatureFlags, onBack: () -> Unit
     var apps by remember { mutableStateOf<List<Pair<String, String>>>(emptyList()) }
     var adding by remember { mutableStateOf(false) }
     var editing by remember { mutableStateOf<String?>(null) }
+    var cap by remember { mutableStateOf(AppPacing.CAREFUL_SCREEN_CAP) }
+    var pickingCap by remember { mutableStateOf(false) }
     // 打开页面就读一次(没初始化过会把内置 careful App 预置进去);本机应用清单另读,不用发给任何模型
     LaunchedEffect(Unit) {
+        cap = runCatching { flags.appScreenCap() }.getOrDefault(AppPacing.CAREFUL_SCREEN_CAP)
         withContext(Dispatchers.IO) {
             runCatching { flags.appPaceOverrides() }.getOrElse { emptyMap() }.let { overrides = it }
             apps = runCatching { launchableApps(context.packageManager, context.packageName) }.getOrElse { emptyList() }
@@ -55,6 +59,13 @@ fun AppPaceScreen(global: OperatingPace, flags: FeatureFlags, onBack: () -> Unit
 
     PageScaffold(stringResource(R.string.settings_pace_per_app), onBack) {
         FooterNote(stringResource(R.string.settings_pace_per_app_intro, paceName(global)))
+        GroupCard {
+            ListRow(
+                null, stringResource(R.string.settings_pace_screen_cap), capName(cap), first = true,
+                onClick = { pickingCap = true },
+            )
+        }
+        FooterNote(stringResource(R.string.settings_pace_screen_cap_foot))
         val list = overrides.orEmpty()
         if (list.isEmpty()) {
             FooterNote(stringResource(R.string.settings_pace_per_app_empty))
@@ -80,6 +91,23 @@ fun AppPaceScreen(global: OperatingPace, flags: FeatureFlags, onBack: () -> Unit
             adding = false
             editing = pkg
         },
+    )
+    if (pickingCap) MikaDialog(
+        onDismissRequest = { pickingCap = false },
+        title = { Text(stringResource(R.string.settings_pace_screen_cap)) },
+        text = {
+            Column {
+                SCREEN_CAPS.forEachIndexed { i, c ->
+                    RadioRow(capName(c), selected = c == cap, first = i == 0, onClick = {
+                        cap = c
+                        flags.setAppScreenCap(c)
+                        pickingCap = false
+                    })
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = { TextButton(onClick = { pickingCap = false }) { Text(stringResource(R.string.cancel)) } },
     )
     editing?.let { pkg ->
         val current = overrides.orEmpty()[pkg]
@@ -146,6 +174,14 @@ private fun AppPacePickerDialog(
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
     )
 }
+
+@Composable
+private fun capName(cap: Int): String =
+    if (cap <= 0) stringResource(R.string.settings_pace_screen_cap_none)
+    else stringResource(R.string.settings_pace_screen_cap_screens, cap)
+
+/** 屏数上限可选的几个值(0 = 不限制)。 */
+private val SCREEN_CAPS = listOf(AppPacing.CAREFUL_SCREEN_CAP, 48, 96, 0)
 
 @Composable
 private fun paceName(p: OperatingPace): String = stringResource(

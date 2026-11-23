@@ -120,6 +120,14 @@ class AppPacingTest {
         assertFalse(p.capReached("com.slow", capped = true))
     }
 
+    @Test fun aScreenCapOfZeroMeansNoCap() {
+        // 设置里选「不限制」时屏数照记,但不再到上限
+        val p = AppPacing(Random(1), screenCap = 0)
+        repeat(40) { p.noteAction("com.slow", 0, newScreen = true, tempo = AppTempo.CAREFUL, capped = true) }
+        assertEquals(40, p.screensIn("com.slow"))
+        assertFalse(p.capReached("com.slow", capped = true))
+    }
+
     @Test fun offNeverWaitsNorCaps() {
         val p = AppPacing.Off
         repeat(50) { p.noteAction("com.slow", 0, newScreen = true, tempo = AppTempo.CAREFUL, capped = true) }

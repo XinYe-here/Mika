@@ -8,6 +8,7 @@ import com.wangzan101.mika.core.cap.web.PagePacing
 import com.wangzan101.mika.core.uistate.PlacePace
 import kotlin.random.Random
 import com.wangzan101.mika.core.action.OutwardPacing
+import com.wangzan101.mika.core.cap.phone.AppPacing
 import com.wangzan101.mika.core.cap.phone.AppPacePlan
 import com.wangzan101.mika.core.cap.phone.OperatingPace
 import com.wangzan101.mika.core.usage.DeepSeekPriceCache
@@ -647,7 +648,12 @@ class TaskRun(
             // 在 App 里操作的节奏(设置 › 任务运行,未覆盖的 App 跟随全局;评测、真机验收按钩子覆盖,
             // 钩子设了档位时按应用覆盖不参与——评测要的是确定)
             val hooked = env.evalHooks.operatingPace
-            val pace = AppPacePlan(hooked ?: FeatureFlags.get(service).operatingPace(), if (hooked == null) FeatureFlags.get(service).appPaceOverrides() else emptyMap())
+            val flags = FeatureFlags.get(service)
+            val pace = AppPacePlan(
+                hooked ?: flags.operatingPace(),
+                if (hooked == null) flags.appPaceOverrides() else emptyMap(),
+                if (hooked == null) flags.appScreenCap() else AppPacing.CAREFUL_SCREEN_CAP,
+            )
             // 助手是否连着;没接上手机之前当作连着(网页、沙箱的步骤不看它)
             val shellUp = MutableStateFlow(true)
             val states = DeviceStateWatcher(service) { id -> phone?.shell?.topTaskId(id) ?: -1 }.also { watcher = it }

@@ -240,4 +240,8 @@
     <plurals name="settings_trigger_run_minutes_n">
         <item quantity="other">%1$d 分钟</item>
     </plurals>
-</resources>
+    <string name="settings_pace_screen_cap">屏数上限</string>
+    <string name="settings_pace_screen_cap_foot">只对设成「像人」的 App 生效：一个任务里最多换这么多屏，到了会停下等你答话，答过后重新算。设「不限制」就不再停。</string>
+    <string name="settings_pace_screen_cap_none">不限制</string>
+    <string name="settings_pace_screen_cap_value">%1$s</string>
+    <string name="settings_pace_screen_cap_screens">%1$d 屏</string></resources>

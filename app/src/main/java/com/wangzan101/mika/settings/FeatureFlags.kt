@@ -133,7 +133,12 @@ class FeatureFlags(private val prefs: SharedPreferences) {
     fun setOperatingPace(pace: OperatingPace) {
         prefs.edit().putString(OPERATING_PACE, pace.name).commit()
     }
+    /** 限制浏览快慢的 App 一个任务里最多换到几屏(设置 › 干活时 › 操作节奏 › 按应用设置);0 为不限制。默认 24。 */
+    fun appScreenCap(): Int = prefs.getInt(APP_SCREEN_CAP, 24)
 
+    fun setAppScreenCap(cap: Int) {
+        prefs.edit().putInt(APP_SCREEN_CAP, cap).commit()
+    }
     /**
      * 按应用的操作节奏覆盖(包名 → 档位)。列表还没初始化过时先把内置 App 知识标 careful 的 App 预置为「像人」
      * (见 [GuideCatalog.carefulApps]);之后运行时只看这份列表,App 知识的 pace 不再参与。
@@ -453,6 +458,7 @@ class FeatureFlags(private val prefs: SharedPreferences) {
         private const val SHOW_TASK_COST = "show_task_cost"
         private const val MUTE_TARGET = "mute_target"
         private const val OPERATING_PACE = "operating_pace"
+    private const val APP_SCREEN_CAP = "app_screen_cap"
         private const val APP_PACE_OVERRIDES = "app_pace_overrides"
         private const val AUTO_ARCHIVE_DAYS = "auto_archive_days"
         private const val SELF_CONFIG = "self_config"

@@ -26,7 +26,7 @@ class AppPacing(
     private val random: Random?,
     val limits: Limits = Limits(),
     val careful: Limits = Limits.CAREFUL,
-    /** 限制浏览快慢的 App 一个任务里(用户答话之间)最多换到多少次新的一屏。 */
+    /** 限制浏览快慢的 App 一个任务里(用户答话之间)最多换到多少次新的一屏;0 为不限制(设置里可选)。 */
     val screenCap: Int = CAREFUL_SCREEN_CAP,
 ) {
     /** 时长单位毫秒。 */
@@ -113,7 +113,7 @@ class AppPacing(
     /** [app] 换到新的一屏的次数已到上限([capped] 的 App 才查):再换屏之前要先停下(用户答应了再看)。普通 App、做过对外动作的 App、[Off] 恒为 false。 */
     @Synchronized
     fun capReached(app: String?, capped: Boolean): Boolean =
-        random != null && app != null && capped && app !in outward && screensIn(app) >= screenCap
+        random != null && app != null && capped && screenCap > 0 && app !in outward && screensIn(app) >= screenCap
 
     /** 本任务在 [app] 里做了一次对外动作(发送、提交):这个 App 余下的时间里不再设屏数上限。 */
     @Synchronized
@@ -134,8 +134,12 @@ class AppPacing(
         /** 从不等待。 */
         val Off = AppPacing(null)
 
-        /** 像人在 App 里一步一步操作的节奏;[random] 可换成固定种子(测试)。 */
-        fun human(random: Random = Random.Default, limits: Limits = Limits(), careful: Limits = Limits.CAREFUL) =
-            AppPacing(random, limits, careful)
+        /** 像人在 App 里一步一步操作的节奏;[random] 可换成固定种子(测试);[screenCap] 为 0 时不限制屏数。 */
+        fun human(
+            random: Random = Random.Default,
+            limits: Limits = Limits(),
+            careful: Limits = Limits.CAREFUL,
+            screenCap: Int = CAREFUL_SCREEN_CAP,
+        ) = AppPacing(random, limits, careful, screenCap)
     }
 }
