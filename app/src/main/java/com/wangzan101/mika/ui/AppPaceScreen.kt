@@ -42,11 +42,11 @@ fun AppPaceScreen(global: OperatingPace, flags: FeatureFlags, onBack: () -> Unit
     var apps by remember { mutableStateOf<List<Pair<String, String>>>(emptyList()) }
     var adding by remember { mutableStateOf(false) }
     var editing by remember { mutableStateOf<String?>(null) }
-    var cap by remember { mutableStateOf(AppPacing.CAREFUL_SCREEN_CAP) }
+    var cap by remember { mutableStateOf(0) }
     var pickingCap by remember { mutableStateOf(false) }
     // 打开页面就读一次(没初始化过会把内置 careful App 预置进去);本机应用清单另读,不用发给任何模型
     LaunchedEffect(Unit) {
-        cap = runCatching { flags.appScreenCap() }.getOrDefault(AppPacing.CAREFUL_SCREEN_CAP)
+        cap = runCatching { flags.appScreenCap() }.getOrDefault(0)
         withContext(Dispatchers.IO) {
             runCatching { flags.appPaceOverrides() }.getOrElse { emptyMap() }.let { overrides = it }
             apps = runCatching { launchableApps(context.packageManager, context.packageName) }.getOrElse { emptyList() }

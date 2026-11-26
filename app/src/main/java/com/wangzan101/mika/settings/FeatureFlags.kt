@@ -133,8 +133,8 @@ class FeatureFlags(private val prefs: SharedPreferences) {
     fun setOperatingPace(pace: OperatingPace) {
         prefs.edit().putString(OPERATING_PACE, pace.name).commit()
     }
-    /** 限制浏览快慢的 App 一个任务里最多换到几屏(设置 › 干活时 › 操作节奏 › 按应用设置);0 为不限制。默认 24。 */
-    fun appScreenCap(): Int = prefs.getInt(APP_SCREEN_CAP, 24)
+    /** 限制浏览快慢的 App 一个任务里最多换到几屏(设置 › 干活时 › 操作节奏 › 按应用设置);0 为不限制。默认不限制。 */
+    fun appScreenCap(): Int = prefs.getInt(APP_SCREEN_CAP, 0)
 
     fun setAppScreenCap(cap: Int) {
         prefs.edit().putInt(APP_SCREEN_CAP, cap).commit()

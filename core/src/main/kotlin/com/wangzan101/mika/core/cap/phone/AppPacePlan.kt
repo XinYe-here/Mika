@@ -9,8 +9,8 @@ class AppPacePlan(
     val global: OperatingPace,
     /** 按应用覆盖:包名 → 档位。 */
     val overrides: Map<String, OperatingPace> = emptyMap(),
-    /** 限制浏览快慢的 App 一个任务里最多换到几屏(设置里可选);0 为不限制。 */
-    val screenCap: Int = AppPacing.CAREFUL_SCREEN_CAP,
+    /** 限制浏览快慢的 App 一个任务里最多换到几屏(设置里可选);0 为不限制(默认)。 */
+    val screenCap: Int = 0,
 ) {
     /** [pkg] 的实际档位:有覆盖用覆盖,否则全局;不知道包名( null)为全局。 */
     fun of(pkg: String?): OperatingPace = overrides[pkg] ?: global
