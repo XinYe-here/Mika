@@ -153,11 +153,11 @@ fun ProviderStore.modelForRoleConfig(role: ModelRole, configId: String, session:
     val settings = p?.contextSettings?.get(raw.model)
     val adjusted = asRole(raw, role)
     val configured = if (settings == null) adjusted.copy(capabilities = adjusted.capabilities.copy(
-        compactionEveryRounds = TEMP_COMPACTION_EVERY_ROUNDS,
+        compactionEveryRounds = DSH_COMPACTION_EVERY_ROUNDS,
     )) else adjusted.copy(capabilities = adjusted.capabilities.copy(
         contextTokens = settings.windowTokens ?: adjusted.capabilities.contextTokens,
         compactionTriggerTokens = settings.triggerTokens,
-        compactionEveryRounds = TEMP_COMPACTION_EVERY_ROUNDS,
+        compactionEveryRounds = DSH_COMPACTION_EVERY_ROUNDS,
     ))
     val roleEffort = _roles.value.reasoningEffort(role)
     val effort = roleEffort?.takeIf { ReasoningOptions.of(configured, listed)?.levels?.contains(it) == true }

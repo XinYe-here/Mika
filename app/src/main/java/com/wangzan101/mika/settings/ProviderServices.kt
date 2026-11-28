@@ -95,11 +95,11 @@ internal fun ProviderStore.meteredWith(
         deepSeekDirect = DeepSeekPriceTable.isOfficialEndpoint(adapterFor(cfg, listed?.endpoint).second))
     val settings = p?.contextSettings?.get(cfg.model)
     val configured = if (settings == null) cfg.copy(capabilities = cfg.capabilities.copy(
-        compactionEveryRounds = TEMP_COMPACTION_EVERY_ROUNDS,
+        compactionEveryRounds = DSH_COMPACTION_EVERY_ROUNDS,
     )) else cfg.copy(capabilities = cfg.capabilities.copy(
         contextTokens = settings.windowTokens ?: cfg.capabilities.contextTokens,
         compactionTriggerTokens = settings.triggerTokens,
-        compactionEveryRounds = TEMP_COMPACTION_EVERY_ROUNDS,
+        compactionEveryRounds = DSH_COMPACTION_EVERY_ROUNDS,
     ))
     val roleEffort = if (useRoleEffort) effortOverride ?: _roles.value.reasoningEffort(role) else effortOverride
     // 主动能力:思考取服务商写明的最低档;回复短的那两种请求另设上限(见 ProactiveModelSetup)

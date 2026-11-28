@@ -151,6 +151,13 @@ internal const val MAX_FALLBACKS = 8
  */
 internal const val TEMP_COMPACTION_EVERY_ROUNDS = 16
 
+/**
+ * 自维护包:不按轮数折叠历史(foldEvery=null),恢复「只按大小触发」的行为。
+ * 上游 d2c98c73 临时给所有模型每 16 轮折一次,长任务里前面的步骤会被折进摘要,表现为「变笨」;
+ * 上游 ae108206 已把这条从集成计划撤掉,等它真删了这里再跟随。
+ */
+internal val DSH_COMPACTION_EVERY_ROUNDS: Int? = null
+
 /** 留空的窗口沿用所选模型配置，留空的触发点交给核心自动计算，留空的读超时用全局默认(120 秒)。 */
 data class ModelContextSettings(val windowTokens: Int? = null, val triggerTokens: Int? = null, val readTimeoutSeconds: Int? = null) {
     fun limits(modelWindow: Int): ContextLimits = ContextLimits.of(windowTokens ?: modelWindow, triggerTokens)
